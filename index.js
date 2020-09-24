@@ -51,6 +51,7 @@ const port = 3030;
         }
     }());
 
+    //apiリクエスト用の処理ラッパー
     jsonWrapperMixin = (function(){
  
 
@@ -72,6 +73,8 @@ const port = 3030;
         }
     }());
 
+
+////////////////////////////////////////////////
     routeMixin = (function(){
         const hello = function (text) {
             var message = text;
@@ -114,7 +117,7 @@ const port = 3030;
                 return message;
             }
         }
-        
+
         return {
             setRoute: function () {
                 this.get("/", hello("api/ Hei! "));
