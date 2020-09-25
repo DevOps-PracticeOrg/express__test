@@ -3,9 +3,9 @@ const express = require('express');
 const app = express();
 const port = 3030;
 
-(function (app) {
+var routing = function (routeMixin, routeApiMixin) {
     let Container, Http, JsonHttp, getHttp, getJsonHttp;
-    let wrapperMixin, jsonWrapperMixin, routeMixin, routeApiMixin;
+    let wrapperMixin, jsonWrapperMixin;
 
     //型
     Container = function (app) {
@@ -75,57 +75,6 @@ const port = 3030;
 
 
 ////////////////////////////////////////////////
-    routeMixin = (function(){
-        const hello = function (text) {
-            var message = text;
-            return function () {
-                var funcs = [
-                    function(){message += "Hello"},
-                    function(){message += " "},
-                    function(){message += "World"},
-                ];
-        
-                _.forEach(funcs, function(func){
-                    func();
-                })
-        
-                return message;
-            }
-        }
-        return {
-            setRoute: function () {
-                this.get("/", hello("Hei! "));
-                this.get("/test", hello("Come on! "));
-            }
-        }
-    }());
-
-    routeApiMixin = (function(){
-        const hello = function (text) {
-            var message = text;
-            return function () {
-                var funcs = [
-                    function(){message += "Hello"},
-                    function(){message += " "},
-                    function(){message += "World"},
-                ];
-        
-                _.forEach(funcs, function(func){
-                    func();
-                })
-        
-                return message;
-            }
-        }
-
-        return {
-            setRoute: function () {
-                this.get("/", hello("api/ Hei! "));
-                this.get("/test", hello("api/ Come on! "));
-                this.get("/get", hello("api/ Come on! "));
-            }
-        }
-    }());
     
     _.extend(Http.prototype, wrapperMixin, routeMixin);
     _.extend(JsonHttp.prototype, jsonWrapperMixin, routeApiMixin);
@@ -133,8 +82,63 @@ const port = 3030;
     getHttp(app).boot().setRoute();
     getJsonHttp(app).boot().setRoute();
 
-}(app));
+}
 
+// 普通のルーティング
+var routeMixin = (function(){
+    const hello = function (text) {
+        var message = text;
+        return function () {
+            var funcs = [
+                function(){message += "Hello"},
+                function(){message += " "},
+                function(){message += "World"},
+            ];
+    
+            _.forEach(funcs, function(func){
+                func();
+            })
+    
+            return message;
+        }
+    }
+    return {
+        setRoute: function () {
+            this.get("/", hello("Hei! "));
+            this.get("/test", hello("Come on! "));
+        }
+    }
+}());
+
+//　API用のルーティング
+var routeApiMixin = (function(){
+    const hello = function (text) {
+        var message = text;
+        return function () {
+            var funcs = [
+                function(){message += "Hello"},
+                function(){message += " "},
+                function(){message += "World"},
+            ];
+    
+            _.forEach(funcs, function(func){
+                func();
+            })
+    
+            return message;
+        }
+    }
+
+    return {
+        setRoute: function () {
+            this.get("/", hello("api/ Hei! "));
+            this.get("/test", hello("api/ Come on! "));
+            this.get("/get", hello("api/ Come on! "));
+        }
+    }
+}());
+
+routing(routeMixin, routeApiMixin)
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`)
 });
